@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 Plugin Name: custom-sessions
 Plugin URI: http://wonkasoft.com/custom-sessions/
@@ -34,14 +34,14 @@ function header_config() {
 
 // Validation by repnum
 // if valid then set session variable for repnum
-  if (!$_SESSION['repnum'] && $_GET['repnum']!='') {
+  if (!$_SESSION['repnum'] && $_GET['repnum'] != '') {
     $_SESSION['repnum'] = $_GET['repnum'];
-  } elseif (!$_GET['repnum']) {
-        status_header( 404 );
-        nocache_headers();
-        include( get_query_template( '404' ) );
-        die();
-  }
+  } elseif ($_SESSION['repnum'] == '' && $_GET['repnum'] =='') {
+          status_header( 404 );
+          nocache_headers();
+          include( get_query_template( '404' ) );
+          die();
+    }
 
 // If new parameter sent update session variable for repnum
   if ($_SESSION['repnum'] != $_GET['repnum'] && $_GET['repnum'] != '') {
@@ -51,19 +51,27 @@ function header_config() {
 // Set discount variable by parameter
   if (!$_SESSION['discount'] && $_GET['discount']!=''){
     $_SESSION['discount'] = $_GET['discount'];
-  } 
+  }
 
 // If new parameter sent update session variable for discount
   if ($_SESSION['discount'] != $_GET['discount'] && $_GET['discount'] != '') {
     $_SESSION['discount'] = $_GET['discount'];
   }
 
-
 }
 
-add_action( 'woocommerce_after_order_notes', 'my_custom_checkout_field' );
+// Add rep number to woocommerce checkout form from session variable
+add_filter( 'woocommerce_checkout_fields' , 'add_repnum_to_checkout' );
 
+function add_repnum_to_checkout( $fields ) {
 
+    $repnum_session = $_SESSION['repnum'];
 
-billing_rep
+    if ( !empty( $repnum_session ) ) {
+    $fields['billing']['billing_rep']['default'] = $repnum_session;
+    }
+
+    return $fields;
+}
+
 ?>
