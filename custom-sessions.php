@@ -14,21 +14,26 @@ add_action('wp_logout', 'myEndSession');
 add_action('wp_login', 'myEndSession');
 add_action('wp_head', 'header_config');
 
-function register_my_session()
-{
+// Setup session
+function register_my_session() {
   if( !session_id() )
   {
     session_start();
   }
 }
 
+// End session
 function myEndSession() {
   session_destroy ();
 }
 
-function header_config(){
-  // Get Rep Number
-  // Get Discount Number
+// Set session variable for rep number and discount number
+// Validate by parameter
+// If repnum is not set then the user will be redirected to the 404 page
+function header_config() {
+
+// Validation by repnum
+// if valid then set session variable for repnum
   if (!$_SESSION['repnum'] && $_GET['repnum']!='') {
     $_SESSION['repnum'] = $_GET['repnum'];
   } elseif (!$_GET['repnum']) {
@@ -38,17 +43,27 @@ function header_config(){
         die();
   }
 
+// If new parameter sent update session variable for repnum
   if ($_SESSION['repnum'] != $_GET['repnum'] && $_GET['repnum'] != '') {
     $_SESSION['repnum'] = $_GET['repnum'];
   }
 
+// Set discount variable by parameter
   if (!$_SESSION['discount'] && $_GET['discount']!=''){
     $_SESSION['discount'] = $_GET['discount'];
   } 
 
+// If new parameter sent update session variable for discount
   if ($_SESSION['discount'] != $_GET['discount'] && $_GET['discount'] != '') {
     $_SESSION['discount'] = $_GET['discount'];
   }
 
+
 }
+
+add_action( 'woocommerce_after_order_notes', 'my_custom_checkout_field' );
+
+
+
+billing_rep
 ?>
